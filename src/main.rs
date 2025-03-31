@@ -1,39 +1,40 @@
-mod config;
-mod compression;
-mod file_service;
-mod server;
+mod core;
+mod network;
+mod handlers;
+mod routing;
+mod plugins;
+mod security;
 mod utils;
 
-use anyhow::Result;
-use clap::Parser;
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+use tracing::{info, Level};
+use tracing_subscriber::FmtSubscriber;
+use std::error::Error;
 
-use crate::config::{Cli, create_config_from_cli};
-use crate::server::Server;
-use crate::utils::print_server_info;
+use crate::core::config::Config;
+use crate::core::server::Server;
 
 #[tokio::main]
-async fn main() -> Result<()> {
-    // 初始化日誌
+async fn main() -> Result<(), Box<dyn Error>> {
+    // Initialize logging
     setup_logging();
     
-    // 處理命令行並創建配置
-    let config = create_config_from_cli(Cli::parse());
+    // Load configuration
+    let config = Config::from_file("config.toml")?;
     
-    // 顯示服務器信息
-    print_server_info(&config.host, config.port);
+    info!("Starting Kaserve web server on {}:{}", config.server.host, config.server.port);
     
-    // 啟動服務器
-    Server::new(config).run().await?;
+    // Create and run server
+    let server = Server::new(config);
+    server.run().await?;
     
     Ok(())
 }
 
 fn setup_logging() {
-    tracing_subscriber::registry()
-        .with(tracing_subscriber::filter::EnvFilter::new(
-            std::env::var("RUST_LOG").unwrap_or_else(|_| "serve_rs=info".into()),
-        ))
-        .with(tracing_subscriber::fmt::layer())
-        .init();
+    let subscriber = FmtSubscriber::builder()
+        .with_max_level(Level::INFO)
+        .finish();
+    
+    tracing::subscriber::set_global_default(subscriber)
+        .expect("Failed to set global default subscriber");
 }

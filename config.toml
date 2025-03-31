@@ -1,0 +1,52 @@
+# Kaserve Web Server Configuration
+
+[server]
+host = "127.0.0.1"
+port = 8080
+workers = 4
+max_connections = 1024
+connection_timeout = 60  # seconds
+
+[static_files]
+root_dir = "./public"
+directory_listing = false
+default_file = "index.html"
+cache_control = "public, max-age=3600"
+
+[tls]
+enabled = false
+cert_file = "cert.pem"
+key_file = "key.pem"
+
+# Virtual hosts configuration
+[[virtual_hosts]]
+host = "example.com"
+root_dir = "./sites/example"
+
+[[virtual_hosts]]
+host = "*.test.local"
+root_dir = "./sites/test"
+
+[logging]
+level = "info"
+access_log = "logs/access.log"
+error_log = "logs/error.log"
+
+[plugins]
+enabled = ["compress", "cache"]
+
+[security]
+# Authentication configuration
+[security.auth]
+enabled = false
+realm = "Kaserve Protected Area"
+
+# Access control configuration
+[security.acl]
+default_allow = true
+
+# Cache configuration
+[cache]
+enabled = true
+max_size = 100  # MB
+max_items = 1000

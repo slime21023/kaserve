@@ -1,0 +1,68 @@
+Project Description:
+Implement a new web server inspired by lighttpd, written in Rust. The server should support core functionalities such as HTTP/HTTPS request handling, static file serving, virtual hosting, URL rewriting, and a modular architecture. Advanced features include FastCGI/SCGI/CGI support, compression, security (TLS/SSL), load balancing, and monitoring/loggin
+
+Tech Stack:
+- Programming Language: Rust
+- Libraries:
+  - Tokio: for async runtime
+  - hyper: for HTTP implementation
+  - rustls: for SSL/TLS
+  - toml: for configuration management
+
+Project Structure:
+- src/
+  - main.rs: Program entry point
+  - server.rs: Server core logic
+  - config.rs: Configuration management
+  - eventloop.rs: Event loop for handling connections
+  - network/
+    - connection.rs: Connection handling and HTTP request processing
+- config.toml: Configuration file
+
+Coding Standards:
+- Follow Rust's best practices:
+  - Use async/await for asynchronous operations
+  - Ensure memory safety and avoid data races
+  - Use zero-copy techniques where possible
+  - Optimize for performance and concurrency
+
+Specific Instructions:
+
+Event-Driven Architecture:
+- Use Tokio for managing asynchronous operations.
+- Implement an event loop that accepts TCP connections and spawns tasks for each connection.
+- Use hyper for HTTP request parsing and response generation.
+- Refer to the design document's "Event-Driven Architecture" section for detailed implementation.
+
+Request Processing Pipeline:
+- Implement a request processing pipeline that includes:
+  - Routing to determine the appropriate handler
+  - Pre-processing for tasks like authentication and access control
+  - Content handling for serving static files or dynamic content
+  - Post-processing for logging and metrics
+- Refer to the design document's "Request Processing Pipeline" section for code examples.
+
+Modular Architecture:
+- Design a plugin system that allows for modular extensions.
+- Define a Plugin trait that modules can implement.
+- Use a PluginManager to load and manage plugins dynamically.
+- Refer to the design document's "Modular Architecture" section for implementation details.
+
+Static File Serving:
+- Serve static files from a specified root directory.
+- Implement efficient file reading and caching mechanisms to optimize performance.
+- Handle 404 (Not Found) and 500 (Internal Server Error) responses appropriately.
+
+Virtual Hosting:
+- Support virtual hosting by parsing the Host header and mapping to different configurations.
+- Allow multiple domains to be served from a single server instance.
+
+URL Rewriting:
+- Implement a rule-based system for URL rewriting and redirection.
+- Configure rewriting rules via the server's configuration file.
+
+References:
+- Refer to the design document for detailed implementation strategies and code examples in the sections:
+  - "Event-Driven Architecture"
+  - "Request Processing Pipeline"
+  - "Modular Architecture"
